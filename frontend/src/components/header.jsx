@@ -2,6 +2,7 @@ import React from 'react';
 // import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import '../style/header.css';
+import '../style/sr.css';
 import Logo from '../assets/argentBankLogo.webp';
 
 function Header() {
