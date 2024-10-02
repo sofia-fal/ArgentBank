@@ -6,6 +6,7 @@ import Footer from './components/footer'
 import Home from './pages/home';
 import Signin from './pages/signin';
 import Profile from './pages/profile';
+import PrivateRoute from './components/private';
 
 export default function App() {
   return (
@@ -14,7 +15,14 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/sign-in" element={<Signin />} />
-        <Route path="/user" element={<Profile />} />
+        <Route
+          path="/user"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
       </Routes>
       <Footer />
     </div>

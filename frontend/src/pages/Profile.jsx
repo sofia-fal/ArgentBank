@@ -2,7 +2,7 @@ import React from 'react';
 import AccountData from '../datas/accounts.json';
 import Account from '../components/account';
 import User from '../components/user';
-import '../style/profile.css'
+import '../style/profile.css';
 
 function Profile() {
   return (
