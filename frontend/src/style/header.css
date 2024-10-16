@@ -34,3 +34,21 @@
   max-width: 100%;
   width: 200px;
 }
+
+.user-info {
+  display: flex;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.logout {
+  border: none;
+  background: none;
+  text-decoration: none;
+  margin-right: 0.5rem;
+  display: flex;
+  gap: 3px;
+  font-weight: bold;
+  color: #2c3e50;
+  font-size: 15px;
+}

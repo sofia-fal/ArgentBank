@@ -1,8 +1,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-// import { useSelector } from 'react-redux';
-import Header from './components/header'
-import Footer from './components/footer'
+import Header from './components/header';
+import Footer from './components/footer';
 import Home from './pages/home';
 import Signin from './pages/signin';
 import Profile from './pages/profile';
@@ -14,15 +13,16 @@ export default function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/sign-in" element={<Signin />} />
+        <Route path="/login" element={<Signin />} />
         <Route
-          path="/user"
+          path="/user/profile"
           element={
             <PrivateRoute>
               <Profile />
             </PrivateRoute>
           }
         />
+        <Route path="*" element={<Signin />} />
       </Routes>
       <Footer />
     </div>

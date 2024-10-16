@@ -3,26 +3,39 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../redux/reducers/authSlice';
 import { useNavigate } from 'react-router-dom';
 import '../style/login.css';
+import { fetchUserProfile } from '../redux/reducers/userSlice'; // Assurez-vous que le chemin est correct
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState(''); // État pour les erreurs d'email
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { isConnected, status, error } = useSelector((state) => state.auth);
 
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Vérification de l'email avec Regex
+    if (!emailRegex.test(email)) {
+      setEmailError('Please enter a valid email address.');
+      return;
+    } else {
+      setEmailError(''); // Réinitialise l'erreur si l'email est valide
+    }
+
     dispatch(login({ email, password }));
   };
 
-  // Surveiller les changements dans le state pour rediriger après connexion réussie
   useEffect(() => {
     if (isConnected) {
-      navigate('/user'); // Redirige vers /user si l'utilisateur est connecté
+      dispatch(fetchUserProfile()); // Appel pour récupérer le profil utilisateur
+      navigate('/user/profile'); // Redirection vers la page utilisateur
     }
-  }, [isConnected, navigate]); // La redirection ne se fait que lorsque "isConnected" change
+  }, [isConnected, dispatch, navigate]);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -35,6 +48,8 @@ const Login = () => {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
+        {emailError && <p className="error">{emailError}</p>}{' '}
+        {/* Afficher l'erreur d'email */}
       </div>
       <div className="input-wrapper">
         <label htmlFor="password">Password</label>
@@ -56,7 +71,11 @@ const Login = () => {
       </button>
 
       {status === 'LOADING' && <p>Loading...</p>}
-      {error && <p className="error">Error: {error}</p>}
+
+      {/* Gérer l'affichage de l'erreur */}
+      {error && typeof error === 'object' && error.message && (
+        <p className="error">{error.message}</p>
+      )}
     </form>
   );
 };

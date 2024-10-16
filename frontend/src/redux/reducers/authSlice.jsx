@@ -1,13 +1,19 @@
-// src/features/authSlice.js
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+// Constantes pour les statuts
+const STATUS = {
+  VOID: 'VOID',
+  LOADING: 'LOADING',
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED',
+};
+
 // État initial
 const initialState = {
-  status: 'VOID',
+  status: STATUS.VOID,
   isConnected: false,
-  token: null,
+  token: localStorage.getItem('token') || null, // Récupérer le token du localStorage
   error: null,
 };
 
@@ -20,17 +26,31 @@ export const login = createAsyncThunk(
         'http://localhost:3001/api/v1/user/login',
         credentials
       );
-      return response.data.token; // Récupérer le token de la réponse
+
+      // Accéder au token dans la réponse
+      const token = response.data.body.token; // Mise à jour ici pour récupérer le token
+
+      if (token) {
+        localStorage.setItem('token', token); // Stocker le token dans le localStorage
+        return token; // Retourner le token
+      } else {
+        throw new Error('Token not found in response');
+      }
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data); // Envoi de l'erreur à l'état
+      console.error(
+        'Login Error:',
+        error.response ? error.response.data : error.message
+      ); // Debug: Afficher l'erreur
+      return thunkAPI.rejectWithValue(
+        error.response?.data || { message: 'An unexpected error occurred' } // Message par défaut
+      );
     }
   }
 );
 
 // Thunk pour la déconnexion
 export const logout = createAsyncThunk('auth/logout', async () => {
-  // Logique de déconnexion (si nécessaire)
-  // Vous pouvez ajouter ici une API de déconnexion si besoin
+  localStorage.removeItem('token'); // Supprimer le token du localStorage
 });
 
 const authSlice = createSlice({
@@ -40,27 +60,28 @@ const authSlice = createSlice({
     resetError: (state) => {
       state.error = null; // Réinitialiser les erreurs
     },
-    // Autres reducers synchrones peuvent être ajoutés ici
   },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
-        state.status = 'LOADING'; // État de chargement
+        state.status = STATUS.LOADING; // État de chargement
       })
       .addCase(login.fulfilled, (state, action) => {
-        state.status = 'SUCCEEDED'; // Connexion réussie
+        state.status = STATUS.SUCCEEDED; // Connexion réussie
         state.isConnected = true;
         state.token = action.payload; // Stocker le token
         state.error = null; // Pas d'erreur
       })
       .addCase(login.rejected, (state, action) => {
-        state.status = 'FAILED'; // Connexion échouée
+        state.status = STATUS.FAILED; // Connexion échouée
         state.isConnected = false;
         state.error = action.payload; // Enregistrer l'erreur
       })
       .addCase(logout.fulfilled, (state) => {
-        // Lors de la déconnexion, réinitialiser l'état
-        return initialState; // Réinitialiser l'état à l'état initial
+        state.status = STATUS.VOID;
+        state.isConnected = false;
+        state.token = null; // Réinitialiser le token
+        state.error = null; // Réinitialiser les erreurs
       });
   },
 });

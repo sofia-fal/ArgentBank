@@ -1,48 +1,93 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateUsername } from '../redux/reducers/userSlice';
 import '../style/user.css';
 
 function User() {
+  const dispatch = useDispatch();
+  const userData = useSelector((state) => state.user.userData);
+
+  const [newUsername, setNewUsername] = useState(userData.userName || ''); // Initialisez avec le nom d'utilisateur actuel
+  const [isEditing, setIsEditing] = useState(false); // État pour contrôler l'affichage du formulaire
+
+  // Mettre à jour l'état newUsername à chaque fois que userData change
+  useEffect(() => {
+    setNewUsername(userData.userName || '');
+  }, [userData]);
+
+  const handleUpdate = (e) => {
+    e.preventDefault();
+    dispatch(updateUsername(newUsername)); // Appeler le thunk pour mettre à jour le nom d'utilisateur
+    setIsEditing(false); // Masquer le formulaire après la sauvegarde
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false); // Masquer le formulaire lorsque le bouton "Cancel" est cliqué
+    setNewUsername(userData.userName || ''); // Réinitialiser le champ à la valeur actuelle
+  };
+
   return (
     <div className="header">
       <h1>
         Welcome back
         <br />
-        Tony Jarvis!
+        {userData.firstName} {userData.lastName}!
       </h1>
-      <button className="edit-button">Edit Name</button>
+      {/* Afficher le bouton Edit Name si on n'est pas en mode édition */}
+      {!isEditing && (
+        <button className="edit-button" onClick={() => setIsEditing(true)}>
+          Edit Name
+        </button>
+      )}
 
-      <div>
-        <h1>Edit user info</h1>
-        <form>
-          <div className="edit-input">
-            <label htmlFor="username">User name:</label>
-            <input type="text" id="username" defaultValue="Username" />
-          </div>
-          <div className="edit-input">
-            <label htmlFor="first-name">First name:</label>
-            <input
-              type="text"
-              id="first-name"
-              defaultValue="First name"
-              disabled={true}
-            />
-          </div>
-          <div className="edit-input">
-            <label htmlFor="last-name">Last name:</label>
-            <input
-              type="text"
-              id="last-name"
-              defaultValue="Last name"
-              disabled={true}
-            />
-          </div>
+      {/* Afficher le formulaire seulement si isEditing est vrai */}
+      {isEditing && (
+        <div>
+          <h1>Edit user info</h1>
+          <form onSubmit={handleUpdate}>
+            <div className="edit-input">
+              <label htmlFor="username">User name:</label>
+              <input
+                type="text"
+                id="username"
+                value={newUsername} // Utilisez la valeur d'état
+                onChange={(e) => setNewUsername(e.target.value)} // Mettre à jour l'état lors de la saisie
+              />
+            </div>
+            <div className="edit-input">
+              <label htmlFor="first-name">First name:</label>
+              <input
+                type="text"
+                id="first-name"
+                defaultValue={userData.firstName}
+                disabled={true}
+              />
+            </div>
+            <div className="edit-input">
+              <label htmlFor="last-name">Last name:</label>
+              <input
+                type="text"
+                id="last-name"
+                defaultValue={userData.lastName}
+                disabled={true}
+              />
+            </div>
 
-          <div className='edit-form-buttons'>
-            <button className='edit-button'>Save</button>
-            <button className='edit-button'>Cancel</button>
-          </div>
-        </form>
-      </div>
+            <div className="edit-form-buttons">
+              <button className="edit-button" type="submit">
+                Save
+              </button>
+              <button
+                className="edit-button"
+                type="button"
+                onClick={handleCancel}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 }
