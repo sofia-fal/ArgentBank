@@ -38,7 +38,7 @@ function Profile() {
 
   // Si le token est présent, afficher le contenu
   if (!token) {
-    return null; // Optionnel : afficher un écran de chargement ou un message si tu le souhaites
+    return null;
   }
 
   return (
