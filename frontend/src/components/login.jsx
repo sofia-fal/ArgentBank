@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../redux/reducers/authSlice';
 import { useNavigate } from 'react-router-dom';
 import '../style/login.css';
-import { fetchUserProfile } from '../redux/reducers/userSlice'; // Assurez-vous que le chemin est correct
+import { fetchUserProfile } from '../redux/reducers/userSlice';
 
 const Login = () => {
   const [email, setEmail] = useState('');
