@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { logout } from '../redux/reducers/authSlice';
+import { logout } from '../redux/actions';
 import AccountData from '../datas/accounts.json';
 import Account from '../components/account';
 import User from '../components/user';

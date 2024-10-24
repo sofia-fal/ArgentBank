@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateUsername } from '../redux/reducers/userSlice';
+import { updateUsername } from '../redux/actions';
 import '../style/user.css';
 
 function User() {
