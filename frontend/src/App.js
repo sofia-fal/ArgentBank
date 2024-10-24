@@ -5,7 +5,7 @@ import Header from './components/header';
 import Footer from './components/footer';
 import Home from './pages/home';
 import Signin from './pages/signin';
-import Profile from './pages/profile';
+import Profile from './pages/profil';
 import PrivateRoute from './components/private';
 import { logout } from './redux/actions';
 
