@@ -1,4 +1,3 @@
-// redux/slices.js
 import { createSlice } from '@reduxjs/toolkit';
 import { login, logout, fetchUserProfile, updateUsername } from './actions';
 
@@ -56,7 +55,7 @@ const authSlice = createSlice({
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    status: 'VOID',
+    status: STATUS.VOID,
     userData: {},
     error: null,
   },
@@ -64,15 +63,15 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchUserProfile.pending, (state) => {
-        state.status = 'LOADING';
+        state.status = STATUS.LOADING;
       })
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
-        state.status = 'SUCCEEDED';
+        state.status = STATUS.SUCCEEDED;
         state.userData = action.payload;
         state.error = null;
       })
       .addCase(fetchUserProfile.rejected, (state, action) => {
-        state.status = 'FAILED';
+        state.status = STATUS.FAILED;
         state.error = action.payload;
       })
       .addCase(updateUsername.fulfilled, (state, action) => {
