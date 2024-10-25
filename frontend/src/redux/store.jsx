@@ -15,7 +15,7 @@ const persistedAuthReducer = persistReducer(persistConfig, authReducer);
 const store = configureStore({
   reducer: {
     auth: persistedAuthReducer, // Utilisation du reducer persistant
-    user: userReducer,
+    user: userReducer, // Utilisation de l'userReducer (persisté)
   },
 });
 

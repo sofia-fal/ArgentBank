@@ -1,15 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { login, logout, fetchUserProfile, updateUsername } from './actions';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
-// Constantes pour les statuts
 const STATUS = {
   VOID: 'VOID',
   LOADING: 'LOADING',
   SUCCEEDED: 'SUCCEEDED',
   FAILED: 'FAILED',
 };
-
-// Slice pour l'authentification
 
 const authSlice = createSlice({
   name: 'auth',
@@ -50,8 +49,6 @@ const authSlice = createSlice({
   },
 });
 
-// Slice pour l'utilisateur
-
 const userSlice = createSlice({
   name: 'user',
   initialState: {
@@ -80,8 +77,24 @@ const userSlice = createSlice({
   },
 });
 
-// Exporter les reducers
+const persistConfig = {
+  key: 'auth',
+  storage,
+};
+
+const persistedAuthReducer = persistReducer(persistConfig, authSlice.reducer);
+
+const userPersistConfig = {
+  key: 'user',
+  storage,
+};
+
+const persistedUserReducer = persistReducer(
+  userPersistConfig,
+  userSlice.reducer
+);
+
 export const { resetError } = authSlice.actions;
 
-export const authReducer = authSlice.reducer;
-export const userReducer = userSlice.reducer;
+export const authReducer = persistedAuthReducer;
+export const userReducer = persistedUserReducer;

@@ -7,7 +7,8 @@ import Home from './pages/home';
 import Signin from './pages/signin';
 import Profile from './pages/profil';
 import PrivateRoute from './components/private';
-import { logout } from './redux/actions';
+import { logout, fetchUserProfile } from './redux/actions';
+import store from './redux/store';
 
 export default function App() {
   const location = useLocation();
@@ -15,12 +16,18 @@ export default function App() {
   const [prevPath, setPrevPath] = useState(location.pathname);
 
   useEffect(() => {
-    // Vérifier si l'utilisateur quitte la route /user/profile
+    // Vérifie l'authentification au démarrage de l'application
+    const token = store.getState().auth.token;
+    if (token) {
+      dispatch(fetchUserProfile());
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    // Vérifie si l'utilisateur quitte la route /user/profile
     if (prevPath === '/user/profile' && location.pathname !== '/user/profile') {
       dispatch(logout());
     }
-
-    // Mettre à jour le chemin précédent
     setPrevPath(location.pathname);
   }, [location, dispatch, prevPath]);
 
