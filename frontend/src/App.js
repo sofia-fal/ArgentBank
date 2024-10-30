@@ -1,35 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import React, { useEffect } from 'react';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import Header from './components/header';
 import Footer from './components/footer';
 import Home from './pages/home';
 import Signin from './pages/signin';
 import Profile from './pages/profil';
 import PrivateRoute from './components/private';
-import { logout, fetchUserProfile } from './redux/actions';
-import store from './redux/store';
+import { fetchUserProfile, logout } from './redux/actions';
 
 export default function App() {
   const location = useLocation();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [prevPath, setPrevPath] = useState(location.pathname);
+  const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
-    // Vérifie l'authentification au démarrage de l'application
-    const token = store.getState().auth.token;
+    // Si un token est présent, on récupère le profil utilisateur
     if (token) {
       dispatch(fetchUserProfile());
     }
-  }, [dispatch]);
+  }, [dispatch, token]);
 
   useEffect(() => {
-    // Vérifie si l'utilisateur quitte la route /user/profile
-    if (prevPath === '/user/profile' && location.pathname !== '/user/profile') {
+    // Vérifie si l'utilisateur est sur une URL invalide
+    const validPaths = ['/', '/login', '/user/profile'];
+    if (!validPaths.includes(location.pathname)) {
+      // Déconnecter et rediriger vers la page de connexion
       dispatch(logout());
+      navigate('/login');
     }
-    setPrevPath(location.pathname);
-  }, [location, dispatch, prevPath]);
+  }, [location, dispatch, navigate]);
 
   return (
     <div>
@@ -45,7 +46,7 @@ export default function App() {
             </PrivateRoute>
           }
         />
-        <Route path="*" element={<Signin />} />
+        <Route path="*" element={<Signin />} /> {/* Page par défaut pour les URL invalides */}
       </Routes>
       <Footer />
     </div>

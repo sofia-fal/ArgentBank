@@ -10,6 +10,7 @@ const STATUS = {
   FAILED: 'FAILED',
 };
 
+// Slice pour l'authentification
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -49,6 +50,7 @@ const authSlice = createSlice({
   },
 });
 
+// Slice pour les données utilisateur
 const userSlice = createSlice({
   name: 'user',
   initialState: {
@@ -77,24 +79,22 @@ const userSlice = createSlice({
   },
 });
 
-const persistConfig = {
+// Configuration pour persister les données d'authentification
+const authPersistConfig = {
   key: 'auth',
   storage,
 };
 
-const persistedAuthReducer = persistReducer(persistConfig, authSlice.reducer);
+const persistedAuthReducer = persistReducer(authPersistConfig, authSlice.reducer);
 
+// Configuration pour persister les données utilisateur
 const userPersistConfig = {
   key: 'user',
   storage,
 };
 
-const persistedUserReducer = persistReducer(
-  userPersistConfig,
-  userSlice.reducer
-);
+const persistedUserReducer = persistReducer(userPersistConfig, userSlice.reducer);
 
+// Export des actions et des reducers persistés
 export const { resetError } = authSlice.actions;
-
-export const authReducer = persistedAuthReducer;
-export const userReducer = persistedUserReducer;
+export { persistedAuthReducer, persistedUserReducer };
